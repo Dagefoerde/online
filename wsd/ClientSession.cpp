@@ -259,14 +259,7 @@ void ClientSession::handleClipboardRequest(DocumentBroker::ClipboardRequest     
             return; // the getclipboard already completed.
         if (type == DocumentBroker::CLIP_REQUEST_SET)
         {
-            std::ostringstream oss;
-            oss << "HTTP/1.1 400 Bad Request\r\n"
-                << "Date: " << Util::getHttpTimeNow() << "\r\n"
-                << "User-Agent: " << WOPI_AGENT_STRING << "\r\n"
-                << "Content-Length: 0\r\n"
-                << "\r\n";
-            socket->send(oss.str());
-            socket->shutdown();
+            Util::sendError(400, socket, "", "", true);
         }
         else // will be handled during shutdown
         {
@@ -305,14 +298,7 @@ void ClientSession::handleClipboardRequest(DocumentBroker::ClipboardRequest     
         }
         else
         {
-            std::ostringstream oss;
-            oss << "HTTP/1.1 400 Bad Request\r\n"
-                << "Date: " << Util::getHttpTimeNow() << "\r\n"
-                << "User-Agent: " << WOPI_AGENT_STRING << "\r\n"
-                << "Content-Length: 0\r\n"
-                << "\r\n";
-            socket->send(oss.str());
-            socket->shutdown();
+            Util::sendError(400, socket, "", "", true);
         }
     }
 }

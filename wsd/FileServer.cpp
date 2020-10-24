@@ -415,15 +415,11 @@ void FileServerRequestHandler::handleRequest(const HTTPRequest& request,
                     std::ostringstream oss;
                     Poco::DateTime now;
                     Poco::DateTime later(now.utcTime(), int64_t(1000)*1000 * 60 * 60 * 24 * 128);
-                    oss << "HTTP/1.1 304 Not Modified\r\n"
-                        "Date: " << Util::getHttpTimeNow() << "\r\n"
-                        "Expires: " << Poco::DateTimeFormatter::format(
-                            later, Poco::DateTimeFormat::HTTP_FORMAT) << "\r\n"
-                        "User-Agent: " WOPI_AGENT_STRING "\r\n"
-                        "Cache-Control: max-age=11059200\r\n"
-                        "\r\n";
-                    socket->send(oss.str());
-                    socket->shutdown();
+                    std::string extraHeaders =
+                        "Expires: " + Poco::DateTimeFormatter::format(
+                            later, Poco::DateTimeFormat::HTTP_FORMAT) + "\r\n" +
+                        "Cache-Control: max-age=11059200\r\n";
+                    Util::sendError(304, socket, "", extraHeaders, true);
                     return;
                 }
             }

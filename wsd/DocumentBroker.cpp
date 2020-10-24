@@ -1917,14 +1917,7 @@ bool DocumentBroker::lookupSendClipboardTag(const std::shared_ptr<StreamSocket> 
 
 #if !MOBILEAPP
     // Bad request.
-    std::ostringstream oss;
-    oss << "HTTP/1.1 400\r\n"
-        << "Date: " << Util::getHttpTimeNow() << "\r\n"
-        << "User-Agent: LOOLWSD WOPI Agent\r\n"
-        << "Content-Length: 0\r\n"
-        << "\r\n"
-        << "Failed to find this clipboard";
-    socket->send(oss.str());
+    Util::sendError(400, socket, "Failed to find this clipboard", "", false);
 #endif
     socket->shutdown();
 

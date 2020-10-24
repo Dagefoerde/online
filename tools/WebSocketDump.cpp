@@ -160,14 +160,7 @@ private:
         catch (const std::exception& exc)
         {
             // Bad request.
-            std::ostringstream oss;
-            oss << "HTTP/1.1 400\r\n"
-                << "Date: " << Util::getHttpTimeNow() << "\r\n"
-                << "User-Agent: LOOLWSD WOPI Agent\r\n"
-                << "Content-Length: 0\r\n"
-                << "\r\n";
-            socket->send(oss.str());
-            socket->shutdown();
+            Util::sendError(400, socket, "", "", true);
 
             // NOTE: Check _wsState to choose between HTTP response or WebSocket (app-level) error.
             LOG_INF('#' << socket->getFD() << " Exception while processing incoming request: [" <<
