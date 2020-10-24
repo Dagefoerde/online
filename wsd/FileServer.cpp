@@ -494,24 +494,20 @@ void FileServerRequestHandler::sendError(int errorCode, const Poco::Net::HTTPReq
                                          const std::string& shortMessage, const std::string& longMessage,
                                          const std::string& extraHeader)
 {
-    Poco::URI requestUri(request.getURI());
-    const std::string& path = requestUri.getPath();
-    std::ostringstream oss;
-    oss << "HTTP/1.1 " << errorCode << "\r\n"
-        "Content-Type: text/html charset=UTF-8\r\n"
-        "Date: " << Util::getHttpTimeNow() << "\r\n"
-        "User-Agent: " << WOPI_AGENT_STRING << "\r\n"
-        << extraHeader
-        << "\r\n";
+    std::string body = "";
+    std::string headers = extraHeader;
     if (!shortMessage.empty())
     {
+        Poco::URI requestUri(request.getURI());
+        const std::string& path = requestUri.getPath();
         std::string pathSanitized;
         Poco::URI::encode(path, "", pathSanitized);
-        oss << "<h1>Error: " << shortMessage << "</h1>"
-            "<p>" << longMessage << ' ' << pathSanitized << "</p>"
+        headers += "Content-Type: text/html charset=UTF-8\r\n";
+        body = "<h1>Error: " + shortMessage + "</h1>" +
+            "<p>" + longMessage + ' ' + pathSanitized + "</p>" +
             "<p>Please contact your system administrator.</p>";
     }
-    socket->send(oss.str());
+    Util::sendError(errorCode, socket, body, headers, false);
 }
 
 void FileServerRequestHandler::readDirToHash(const std::string &basePath, const std::string &path, const std::string &prefix)
