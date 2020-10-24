@@ -1067,6 +1067,34 @@ namespace Util
 
         return StringVector(s, std::move(tokens));
     }
+
+    void sendError(int errorCode, const std::shared_ptr<StreamSocket>& socket,
+                   const std::string& body, const std::string& extraHeader, bool shutdownAfter)
+    {
+
+        std::ostringstream oss;
+        oss << "HTTP/1.1 " << errorCode << "\r\n"
+            << "Date: " << Util::getHttpTimeNow() << "\r\n"
+            << "User-Agent: " << WOPI_AGENT_STRING << "\r\n"
+            << extraHeader;
+        if (body.empty())
+        {
+            oss << "Content-Length: 0\r\n";
+        }
+        oss << "\r\n";
+
+        if (!body.empty())
+        {
+            oss << body;
+        }
+
+        socket->send(oss.str());
+
+        if (shutdownAfter) {
+            socket->shutdown();
+        }
+    }
+
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -38,6 +38,7 @@
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
 
 #include <StringVector.hpp>
+#include "Socket.hpp"
 
 namespace Util
 {
@@ -927,6 +928,10 @@ int main(int argc, char**argv)
 
     /// Extract and return the filename given a url or path.
     std::string getFilenameFromURL(const std::string& url);
+
+    /// Write headers and body for an error response.
+    void sendError(int errorCode, const std::shared_ptr<StreamSocket>& socket,
+                   const std::string& body, const std::string& extraHeader, bool shutdownAfter);
 
     /// Given one or more patterns to allow, and one or more to deny,
     /// the match member will return true if, and only if, the subject
